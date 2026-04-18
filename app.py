@@ -6,28 +6,40 @@ app = Flask(__name__)
 
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    result = None
-    prob = None
-    img_path = None
-
     if request.method == 'POST':
-        file = request.files.get('file')
+        if 'file' not in request.files:
+            return "没有文件"
 
-        if file and file.filename != '':
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(filepath)
+        file = request.files['file']
 
+        if file.filename == '':
+            return "文件为空"
+
+        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+        file.save(filepath)
+
+        try:
             result, prob = predict(filepath)
-            img_path = '/' + filepath
+        except Exception as e:
+            return f"模型报错：{str(e)}"
 
-    return render_template('index.html',
-                           result=result,
-                           prob=prob,
-                           img_path=img_path)
+        return f"""
+        <h2>{result}（概率: {prob}）</h2>
+        <img src='/{filepath}' width='300'>
+        <br><br>
+        <a href="/">返回</a>
+        """
 
+    return """
+    <h2>AI骨折检测系统（修复版）</h2>
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">上传</button>
+    </form>
+    """
+    
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=10000)
+    app.run(host='0.0.0.0', port=10000)
