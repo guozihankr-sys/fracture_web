@@ -3,14 +3,11 @@ import os
 from model import predict
 
 app = Flask(__name__)
-
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = 'static'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
 @app.route('/', methods=['GET', 'POST'])
-def index():
+def home():
     result = None
     prob = None
     img_path = None
@@ -30,5 +27,4 @@ def index():
                            img_path=img_path)
 
 if __name__ == '__main__':
-    import os
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+    app.run(debug=True)
