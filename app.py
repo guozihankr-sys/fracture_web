@@ -2,13 +2,23 @@ from flask import Flask, request, render_template_string
 from PIL import Image
 import numpy as np
 import cv2
-import base64
-from io import BytesIO
+import torch
+import torchvision.transforms as transforms
 
 app = Flask(__name__)
 
+# 👉 模拟AI模型（用随机值代替真实预测）
+def fake_ai_predict(img):
+    return np.random.rand()  # 返回0~1概率
+
+# 👉 图像预处理
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+])
+
 HTML = """
-<h2>🦴 骨折影像分析系统（升级版）</h2>
+<h2>🧠 AI骨折检测系统（升级版）</h2>
 
 <form method="post" enctype="multipart/form-data">
   <input type="file" name="file">
@@ -16,53 +26,43 @@ HTML = """
 </form>
 
 {% if result %}
-<hr>
-<p><b>分析结果：</b>{{ result }}</p>
-
-<h3>原始图像：</h3>
-<img src="data:image/png;base64,{{ original_img }}" width="300">
-
-<h3>边缘检测图：</h3>
-<img src="data:image/png;base64,{{ edge_img }}" width="300">
+<h3>分析结果：</h3>
+<p>{{ result }}</p>
+<img src="{{ image_url }}" width="300">
 {% endif %}
 """
-
-def image_to_base64(img):
-    buffer = BytesIO()
-    Image.fromarray(img).save(buffer, format="PNG")
-    return base64.b64encode(buffer.getvalue()).decode()
 
 @app.route("/", methods=["GET", "POST"])
 def upload():
     result = None
-    original_img = None
-    edge_img = None
+    image_url = None
 
     if request.method == "POST":
         file = request.files["file"]
 
         if file:
-            image = Image.open(file).convert("L")
-            img = np.array(image)
+            image = Image.open(file).convert("RGB")
 
-            edges = cv2.Canny(img, 50, 150)
-            edge_count = np.sum(edges > 0)
+            # 👉 AI输入
+            img_tensor = transform(image).unsqueeze(0)
 
-            if edge_count > 5000:
-                result = "⚠️ 可能存在骨折（边缘异常较多）"
+            # 👉 AI预测（现在是假的）
+            prob = fake_ai_predict(img_tensor)
+
+            if prob > 0.5:
+                result = f"⚠️ 疑似骨折（概率：{prob:.2f}）"
             else:
-                result = "✅ 未检测到明显骨折"
+                result = f"✅ 正常（概率：{1-prob:.2f}）"
 
-            # 转 base64 显示
-            original_img = image_to_base64(img)
-            edge_img = image_to_base64(edges)
+            # 👉 转base64显示图片
+            import base64
+            from io import BytesIO
+            buffered = BytesIO()
+            image.save(buffered, format="PNG")
+            img_str = base64.b64encode(buffered.getvalue()).decode()
+            image_url = "data:image/png;base64," + img_str
 
-    return render_template_string(
-        HTML,
-        result=result,
-        original_img=original_img,
-        edge_img=edge_img
-    )
+    return render_template_string(HTML, result=result, image_url=image_url)
 
 if __name__ == "__main__":
     app.run()
