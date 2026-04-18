@@ -2,5 +2,4 @@ flask
 pillow
 numpy
 opencv-python
-torch
-torchvision
+gunicorn
