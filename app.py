@@ -23,7 +23,7 @@ def home():
 
             result, prob = predict(filepath)
 
-            # ⭐ 关键：给前端用的路径（必须加 /）
+            # ⭐ 关键修复（必须有 /）
             img_path = '/' + filepath
 
     return render_template('index.html',
@@ -32,4 +32,5 @@ def home():
                            img_path=img_path)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
