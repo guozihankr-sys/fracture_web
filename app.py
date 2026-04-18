@@ -3,7 +3,9 @@ import os
 from model import predict
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'static'
+
+UPLOAD_FOLDER = 'static/uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/', methods=['GET', 'POST'])
@@ -13,13 +15,16 @@ def home():
     img_path = None
 
     if request.method == 'POST':
-        file = request.files['file']
-        if file:
+        file = request.files.get('file')
+
+        if file and file.filename != '':
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
 
             result, prob = predict(filepath)
-            img_path = filepath
+
+            # ⭐ 关键：给前端用的路径（必须加 /）
+            img_path = '/' + filepath
 
     return render_template('index.html',
                            result=result,
