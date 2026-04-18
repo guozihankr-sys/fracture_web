@@ -1,4 +1,5 @@
 flask
-pillow
+Pillow
 numpy
 opencv-python
+gunicorn
