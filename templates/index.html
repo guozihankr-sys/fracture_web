@@ -3,9 +3,10 @@
 <head>
     <title>AI骨折检测系统</title>
 </head>
+
 <body style="text-align:center; font-family:Arial;">
 
-<h2>🦴 AI骨折检测系统（增强版）</h2>
+<h2>🦴 AI骨折检测系统（稳定版）</h2>
 
 <form method="post" enctype="multipart/form-data">
     <input type="file" name="file" required>
@@ -15,16 +16,9 @@
 {% if result %}
     <h3>{{ result }}（概率: {{ prob }}）</h3>
 
-    <div style="display:flex; justify-content:center; gap:40px; margin-top:20px;">
-        <div>
-            <h4>原图</h4>
-            <img src="{{ img_path }}" width="250">
-        </div>
-
-        <div>
-            <h4>AI边缘分析</h4>
-            <img src="{{ edge_path }}" width="250">
-        </div>
+    <div style="margin-top:20px;">
+        <h4>上传的图像：</h4>
+        <img src="{{ img_path }}" width="300">
     </div>
 {% endif %}
 
