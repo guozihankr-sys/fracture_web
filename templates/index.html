@@ -3,8 +3,9 @@
 <head>
     <title>AI骨折检测系统</title>
 </head>
-<body>
-    <h2>AI骨折检测系统</h2>
+<body style="text-align:center; font-family:Arial; margin-top:50px;">
+
+    <h2>🦴 AI骨折检测系统</h2>
 
     <form method="post" enctype="multipart/form-data">
         <input type="file" name="file">
@@ -12,8 +13,14 @@
     </form>
 
     {% if result %}
-        <h3>{{ result }} (概率: {{ prob }})</h3>
-        <img src="{{ img_path }}" width="300">
+        <h3 style="margin-top:20px;">
+            {{ result }}（概率: {{ prob }}）
+        </h3>
+
+        {% if img_path %}
+            <img src="{{ img_path }}" width="300">
+        {% endif %}
     {% endif %}
+
 </body>
 </html>
