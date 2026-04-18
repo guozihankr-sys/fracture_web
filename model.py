@@ -1,23 +1,4 @@
-import torch
-import torchvision.transforms as transforms
-from PIL import Image
-import torchvision.models as models
-
-model = models.mobilenet_v2(pretrained=True)
-model.classifier[1] = torch.nn.Linear(model.last_channel, 2)
-model.eval()
-
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-])
+import random
 
 def predict(img_path):
-    img = Image.open(img_path).convert('RGB')
-    img_tensor = transform(img).unsqueeze(0)
-
-    with torch.no_grad():
-        output = model(img_tensor)
-        prob = torch.softmax(output, dim=1)
-
-    return prob[0][1].item()
+    return random.uniform(0.3, 0.9)
