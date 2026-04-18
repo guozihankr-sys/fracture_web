@@ -1,25 +1,26 @@
 from PIL import Image
 import numpy as np
-import cv2
 
 def predict(img_path):
-    # 读取图片
     image = Image.open(img_path).convert("L")
     img = np.array(image)
 
-    # 边缘检测
-    edges = cv2.Canny(img, 50, 150)
-    edge_count = np.sum(edges > 0)
+    # 对比度
+    contrast = img.std()
 
     # 亮度
-    brightness = np.mean(img)
+    brightness = img.mean()
 
-    # 简单规则（比随机聪明很多）
-    score = edge_count / 10000 + brightness / 255
+    # ⭐ 重新设计评分（更合理）
+    contrast_score = contrast / 80      # 控制范围
+    brightness_score = brightness / 255
+
+    # 加权（重点）
+    score = 0.6 * contrast_score + 0.4 * brightness_score
 
     prob = round(min(score, 1.0), 2)
 
-    if prob > 0.5:
+    if prob > 0.55:
         return "检测到骨折", prob
     else:
         return "未检测到骨折", prob
