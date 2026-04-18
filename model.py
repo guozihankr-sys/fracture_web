@@ -4,6 +4,6 @@ def predict(img_path):
     prob = round(random.uniform(0.3, 0.9), 2)
 
     if prob > 0.5:
-        return "fracture", prob
+        return "检测到骨折", prob
     else:
-        return "normal", prob
+        return "未检测到骨折", prob
