@@ -2,25 +2,34 @@
 <html>
 <head>
     <title>AI骨折检测系统</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial;
+            margin-top: 40px;
+        }
+        img {
+            max-width: 300px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
-<body style="text-align:center; font-family:Arial; margin-top:50px;">
+<body>
 
-    <h2>🦴 AI骨折检测系统</h2>
+<h2>🦴 AI骨折检测系统</h2>
 
-    <form method="post" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <button type="submit">上传并分析</button>
-    </form>
+<form method="post" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">上传并分析</button>
+</form>
 
-    {% if result %}
-        <h3 style="margin-top:20px;">
-            {{ result }}（概率: {{ prob }}）
-        </h3>
+{% if result %}
+    <h3>{{ result }}（概率: {{ prob }}）</h3>
 
-        {% if img_path %}
-            <img src="{{ img_path }}" width="300">
-        {% endif %}
+    {% if img_path %}
+        <img src="{{ img_path }}">
     {% endif %}
+{% endif %}
 
 </body>
 </html>
