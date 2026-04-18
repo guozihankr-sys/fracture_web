@@ -13,7 +13,6 @@ def home():
     result = None
     prob = None
     img_path = None
-    edge_path = None
 
     if request.method == 'POST':
         file = request.files.get('file')
@@ -22,17 +21,13 @@ def home():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
 
-            result, prob, edge = predict(filepath)
-
+            result, prob = predict(filepath)
             img_path = '/' + filepath
-            edge_path = '/' + edge
 
     return render_template('index.html',
                            result=result,
                            prob=prob,
-                           img_path=img_path,
-                           edge_path=edge_path)
+                           img_path=img_path)
 
 if __name__ == '__main__':
-    import os
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+    app.run(host="0.0.0.0", port=10000)
