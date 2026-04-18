@@ -3,8 +3,8 @@ import torchvision.transforms as transforms
 from PIL import Image
 import torchvision.models as models
 
-model = models.resnet18(pretrained=True)
-model.fc = torch.nn.Linear(model.fc.in_features, 2)
+model = models.mobilenet_v2(pretrained=True)
+model.classifier[1] = torch.nn.Linear(model.last_channel, 2)
 model.eval()
 
 transform = transforms.Compose([
